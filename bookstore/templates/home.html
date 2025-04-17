@@ -1,0 +1,103 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+
+{% block title %}Secure Book Library - Home{% endblock %}
+
+{% block content %}
+<header class="bg-dark text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h1 class="display-4 fw-bold mb-3">Welcome to Secure Book Library</h1>
+                <p class="lead mb-4">A secure platform for distributing protected content with controlled access.</p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'book_list' %}" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-book me-2"></i>Browse Books
+                    </a>
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'signup' %}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fas fa-user-plus me-2"></i>Sign Up
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block">
+                <img src="https://via.placeholder.com/500x400" alt="Book Library" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</header>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">How It Works</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-search fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="card-title">Browse Books</h4>
+                        <p class="card-text">Explore our collection of protected books available in our library.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-paper-plane fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="card-title">Request Access</h4>
+                        <p class="card-text">Send a request to access books that interest you.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-unlock-alt fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="card-title">Get Access</h4>
+                        <p class="card-text">Once approved, receive password to open the locked PDF.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 order-lg-2">
+                <img src="https://via.placeholder.com/600x400" alt="Secure access" class="img-fluid rounded shadow">
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <h2 class="mb-4">Secure Content Distribution</h2>
+                <p class="lead">Our platform ensures that your content remains protected while providing controlled access to authorized users.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success me-2"></i> 
+                        Password-protected PDF files
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success me-2"></i> 
+                        Controlled access approval system
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success me-2"></i> 
+                        User management for administrators
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success me-2"></i> 
+                        Secure distribution of access credentials
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

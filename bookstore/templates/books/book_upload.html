@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Book - Secure Book Library{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="display-5">Upload New Book</h1>
+                <p class="lead">Add a new protected book to the library</p>
+            </div>
+            <div>
+                <a href="{% url 'admin_panel' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Admin Panel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Book Information</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.title.id_for_label }}" class="form-label">Book Title</label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                <div class="text-danger">{{ form.title.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.author.id_for_label }}" class="form-label">Author</label>
+                                {{ form.author }}
+                                {% if form.author.errors %}
+                                <div class="text-danger">{{ form.author.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.cover_image.id_for_label }}" class="form-label">Cover Image</label>
+                                {{ form.cover_image }}
+                                <div class="form-text">Recommended size: 600x900 pixels (JPG, PNG)</div>
+                                {% if form.cover_image.errors %}
+                                <div class="text-danger">{{ form.cover_image.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.pdf_file.id_for_label }}" class="form-label">PDF File</label>
+                                {{ form.pdf_file }}
+                                {% if form.pdf_file.errors %}
+                                <div class="text-danger">{{ form.pdf_file.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.password.id_for_label }}" class="form-label">PDF Password</label>
+                            {{ form.password }}
+                            <div class="form-text">{{ form.password.help_text }}</div>
+                            {% if form.password.errors %}
+                            <div class="text-danger">{{ form.password.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-upload me-2"></i>Upload Book
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const coverImageInput = document.getElementById('{{ form.cover_image.id_for_label }}');
+        if (coverImageInput) {
+            coverImageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Maybe add preview functionality here
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}  

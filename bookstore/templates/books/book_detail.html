@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ book.title }} - Secure Book Library{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow">
+                <img src="{{ book.cover_image.url }}" class="card-img-top book-cover" alt="{{ book.title }}">
+                <div class="card-body">
+                    <h5 class="text-center">{{ book.title }}</h5>
+                    <p class="text-center text-muted">By {{ book.author }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <h1 class="mb-3">{{ book.title }}</h1>
+            <h5 class="text-muted mb-4">By {{ book.author }}</h5>
+            
+            <div class="mb-4">
+                <h5>Description</h5>
+                <p>{{ book.description }}</p>
+            </div>
+            
+            <div class="mb-4">
+                <h5>Upload Date</h5>
+                <p>{{ book.upload_date|date:"F j, Y" }}</p>
+            </div>
+            
+            {% if user.is_authenticated %}
+                {% if user.is_admin %}
+                    <div class="alert alert-info">
+                        <h5 class="alert-heading"><i class="fas fa-user-shield me-2"></i>Admin Access</h5>
+                        <p class="mb-0">As an admin, you have full access to this book.</p>
+                        <hr>
+                        <a href="{{ book.pdf_file.url }}" class="btn btn-primary" target="_blank">
+                            <i class="fas fa-file-pdf me-2"></i>Open PDF
+                        </a>
+                    </div>
+                {% else %}
+                    {% if access_request %}
+                        {% if access_request.status == 'pending' %}
+                            <div class="alert alert-warning">
+                                <h5 class="alert-heading"><i class="fas fa-clock me-2"></i>Access Requested</h5>
+                                <p>Your request for access to this book is pending approval. You'll be notified when it's approved.</p>
+                            </div>
+                        {% elif access_request.status == 'approved' %}
+                            <div class="alert alert-success">
+                                <h5 class="alert-heading"><i class="fas fa-unlock-alt me-2"></i>Access Granted</h5>
+                                <p>Your request has been approved. Use the password below to open the PDF:</p>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" value="{{ access_request.pdf_password }}" id="passwordField" readonly>
+                                    <button class="btn btn-outline-secondary" type="button" id="copyBtn">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <a href="{{ book.pdf_file.url }}" class="btn btn-primary" target="_blank">
+                                    <i class="fas fa-file-pdf me-2"></i>Download PDF
+                                </a>
+                            </div>
+                        {% elif access_request.status == 'rejected' %}
+                            <div class="alert alert-danger">
+                                <h5 class="alert-heading"><i class="fas fa-times-circle me-2"></i>Access Denied</h5>
+                                <p>Unfortunately, your request for access to this book has been rejected.</p>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-info">
+                            <h5 class="alert-heading"><i class="fas fa-lock me-2"></i>Protected Content</h5>
+                            <p>This book requires access approval. Please submit a request to view this book.</p>
+                            <form method="post" action="{% url 'request_access' book.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i>Request Access
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                <div class="alert alert-secondary">
+                    <h5 class="alert-heading"><i class="fas fa-user me-2"></i>Login Required</h5>
+                    <p>Please login or create an account to request access to this book.</p>
+                    <div>
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary me-2">
+                            Login
+                        </a>
+                        <a href="{% url 'signup' %}" class="btn btn-outline-primary">
+                            Sign Up
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const copyBtn = document.getElementById('copyBtn');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', function() {
+                const passwordField = document.getElementById('passwordField');
+                passwordField.select();
+                document.execCommand('copy');
+                
+                // Show tooltip or change button text temporarily
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(function() {
+                    copyBtn.innerHTML = originalText;
+                }, 1500);
+            });
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}
