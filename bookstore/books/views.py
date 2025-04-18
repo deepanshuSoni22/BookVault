@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.core.files.base import ContentFile
 from .models import Book, AccessRequest
 from .forms import BookUploadForm, AccessRequestForm, AccessResponseForm
 from accounts.models import User
@@ -83,24 +84,27 @@ class AccessRequestsView(AdminRequiredMixin, ListView):
 
 @login_required
 def handle_access_request(request, request_id):
-    if not request.user.is_admin:
-        messages.error(request, "You don't have permission to perform this action")
-        return redirect('book_list')
-        
     access_request = get_object_or_404(AccessRequest, id=request_id)
-    
+    if not request.user.is_admin:
+        messages.error(request, "You don't have permission.")
+        return redirect('book_list')
+
     if request.method == 'POST':
         form = AccessResponseForm(request.POST, instance=access_request)
         if form.is_valid():
-            form.save()
-            messages.success(request, f"Access request from {access_request.user.username} has been updated")
+            access_req = form.save(commit=False)
+            if access_req.status == 'approved':
+                # pull the book’s encryption password
+                access_req.pdf_password = access_req.book.password
+            access_req.save()
+            messages.success(request,
+                f"Request by {access_req.user.username} {access_req.status}.")
             return redirect('access_requests')
     else:
         form = AccessResponseForm(instance=access_request)
-    
+
     return render(request, 'books/handle_request.html', {
-        'form': form,
-        'access_request': access_request
+        'form': form, 'access_request': access_request
     })
 
 class BookUploadView(AdminRequiredMixin, CreateView):
@@ -114,24 +118,42 @@ class BookUploadView(AdminRequiredMixin, CreateView):
         pdf_file = form.cleaned_data['pdf_file']
         password = form.cleaned_data['password']
         
-        # Create a response but don't save to DB yet
+        # 1) Create a response but don't save to DB yet
         self.object = form.save(commit=False)
         
         # Here we would encrypt the PDF, but for demonstration purposes
         # we'll just save the form with a comment about encryption
         
-        # In a real application, you would use a library like PyPDF2 to encrypt the PDF:
-        # reader = PyPDF2.PdfReader(pdf_file)
-        # writer = PyPDF2.PdfWriter()
-        # for page in reader.pages:
-        #     writer.add_page(page)
-        # writer.encrypt(password)
-        # encrypted_file = io.BytesIO()
-        # writer.write(encrypted_file)
-        # encrypted_file.seek(0)
-        # self.object.pdf_file.save(os.path.basename(pdf_file.name), encrypted_file)
+        # 2) read & encrypt
+        reader = PyPDF2.PdfReader(pdf_file)
+        writer = PyPDF2.PdfWriter()
+        for page in reader.pages:
+            writer.add_page(page)
+        writer.encrypt(user_pwd=password)
+
+        # 3) dump encrypted PDF into a buffer
+        buf = io.BytesIO()
+        writer.write(buf)
+        buf.seek(0)
+
+        # 4) save buffer into FileField
+        filename = os.path.basename(pdf_file.name)
+        encrypted_name = f"enc_{filename}"
+        self.object.pdf_file.save(
+            encrypted_name,
+            ContentFile(buf.read()),
+            save=False
+        )
         
-        # For now, we'll just save the original file
+        # 5) persist the password on Book
+        self.object.password = password
+
+        # 6) final save
         self.object.save()
-        messages.success(self.request, f"Book '{self.object.title}' has been uploaded and encrypted")
-        return redirect(self.success_url)
+
+        messages.success(
+            self.request,
+            f"Book '{self.object.title}' has been uploaded and encrypted"
+        )
+
+        return super().form_valid(form)

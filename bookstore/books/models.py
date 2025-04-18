@@ -9,6 +9,10 @@ class Book(models.Model):
     description = models.TextField()
     cover_image = models.ImageField(upload_to='covers/')
     pdf_file = models.FileField(upload_to='pdfs/')
+    password = models.CharField(
+        max_length=50,
+        help_text="Password used to encrypt this PDF",
+    )
     upload_date = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
