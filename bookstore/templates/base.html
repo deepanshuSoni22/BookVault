@@ -1,201 +1,126 @@
-<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Secure Book Library{% endblock %}</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
-            --danger-color: #e74c3c;
-            --success-color: #2ecc71;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Secure Book Library{% endblock %}</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#5a4631',    // Mocha Mousse
+            secondary: '#137dc5',  // True Blue
+            accent: '#00cfc8',     // Verdant Green
+            neutral: '#f7e8d3',    // Cream neutral
+            dark: '#0f172a',
+            light: '#f4f6f8'
+          },
+          fontFamily: {
+            heading: ['Montserrat', 'sans-serif'],
+            body:    ['Poppins',     'sans-serif']
+          }
         }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        
-        .navbar {
-            background-color: var(--primary-color);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .navbar-brand {
-            font-weight: bold;
-            color: white !important;
-        }
-        
-        .navbar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.85) !important;
-        }
-        
-        .navbar-nav .nav-link:hover {
-            color: white !important;
-        }
-        
-        .navbar-nav .active > .nav-link {
-            color: white !important;
-            font-weight: bold;
-        }
-        
-        .card {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-            margin-bottom: 20px;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .book-cover {
-            height: 300px;
-            object-fit: cover;
-        }
-        
-        .btn-primary {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-        
-        .btn-primary:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
-        }
-        
-        .footer {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-        
-        .badge-admin {
-            background-color: var(--danger-color);
-            color: white;
-        }
-        
-        .badge-pending {
-            background-color: #f39c12;
-            color: white;
-        }
-        
-        .badge-approved {
-            background-color: var(--success-color);
-            color: white;
-        }
-        
-        .badge-rejected {
-            background-color: var(--danger-color);
-            color: white;
-        }
-        
-        .page-header {
-            background-color: var(--light-color);
-            padding: 30px 0;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #ddd;
-        }
-    </style>
-    {% block extra_css %}{% endblock %}
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <i class="fas fa-book-reader me-2"></i>Secure Book Library
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'book_list' %}active{% endif %}" href="{% url 'book_list' %}">Books</a>
-                    </li>
-                    {% if user.is_authenticated and user.is_admin %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'admin_panel' %}active{% endif %}" href="{% url 'admin_panel' %}">Admin Panel</a>
-                    </li>
-                    {% endif %}
-                </ul>
-                <ul class="navbar-nav">
-                    {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle me-1"></i>{{ user.username }}
-                            {% if user.is_admin %}
-                            <span class="badge badge-admin">Admin</span>
-                            {% endif %}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <form method="post" action="{% url 'logout' %}" class="dropdown-item p-0 bg-transparent">
-                                    {% csrf_token %}
-                                    <button type="submit" class="dropdown-item border-0">Logout</button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'login' %}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'signup' %}active{% endif %}" href="{% url 'signup' %}">Sign Up</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
+<body class="bg-light text-dark font-body">
 
-    <!-- Messages -->
-    {% if messages %}
-    <div class="container mt-3">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  <!-- Navbar -->
+  <nav class="bg-white/70 backdrop-blur-md shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="{% url 'home' %}" class="flex items-center space-x-2 font-heading text-xl text-primary">
+        <i class="fas fa-book-reader"></i>
+        <span>Secure Book Library</span>
+      </a>
+      <div class="hidden md:flex items-center space-x-6 font-body">
+        <a href="{% url 'home' %}" class="hover:text-secondary transition">Home</a>
+        <a href="{% url 'book_list' %}" class="hover:text-secondary transition">Books</a>
+        {% if user.is_authenticated and user.is_admin %}
+          <a href="{% url 'admin_panel' %}" class="hover:text-secondary transition">Admin Panel</a>
+        {% endif %}
+      </div>
+      <div class="flex items-center space-x-4 font-body">
+        {% if user.is_authenticated %}
+        <div class="relative group">
+          <button class="flex items-center space-x-2">
+            <i class="fas fa-user-circle text-2xl"></i>
+            <span>{{ user.username }}</span>
+          </button>
+          <div class="absolute right-0 mt-2 hidden group-hover:block bg-white shadow-lg rounded">
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="block px-4 py-2 text-left hover:bg-light w-full">Logout</button>
+            </form>
+          </div>
         </div>
-        {% endfor %}
+        {% else %}
+          <a href="{% url 'login' %}" class="hover:text-secondary transition">Login</a>
+          <a href="{% url 'signup' %}" class="hover:text-secondary transition">Sign Up</a>
+        {% endif %}
+      </div>
+      <button class="md:hidden text-2xl" id="navToggle"><i class="fas fa-bars"></i></button>
     </div>
-    {% endif %}
+    <!-- Mobile Menu -->
+    <div class="md:hidden hidden bg-white/90" id="navMenu">
+      <a href="{% url 'home' %}" class="block px-6 py-2 hover:bg-light">Home</a>
+      <a href="{% url 'book_list' %}" class="block px-6 py-2 hover:bg-light">Books</a>
+      {% if user.is_authenticated and user.is_admin %}
+        <a href="{% url 'admin_panel' %}" class="block px-6 py-2 hover:bg-light">Admin Panel</a>
+      {% endif %}
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}" class="px-6 py-2">
+          {% csrf_token %}
+          <button type="submit" class="w-full text-left hover:bg-light">Logout</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="block px-6 py-2 hover:bg-light">Login</a>
+        <a href="{% url 'signup' %}" class="block px-6 py-2 hover:bg-light">Sign Up</a>
+      {% endif %}
+    </div>
+  </nav>
 
-    <!-- Main Content -->
-    {% block content %}{% endblock %}
+  <!-- Flash Messages -->
+  {% if messages %}
+  <div class="max-w-3xl mx-auto mt-6 space-y-4 px-6">
+    {% for message in messages %}
+    <div class="p-4 rounded-lg text-sm
+      {% if message.tags == 'success' %}bg-accent/10 text-accent
+      {% elif message.tags in 'error danger' %}bg-danger/10 text-danger
+      {% else %}bg-secondary/10 text-secondary{% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="d-flex flex-lg-row flex-md-column flex-sm-column justify-content-between align-items-center">
-                <div class="row-md-6">
-                    <h5>Secure Book Library</h5>
-                    <p>A secure platform for distributing protected content.</p>
-                </div>
-                <div class="row-md-6 text-md-end">
-                    <p>&copy; {% now "Y" %} Secure Book Library. All rights reserved.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
+  {% block content %}{% endblock %}
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    {% block extra_js %}{% endblock %}
+  <!-- Footer -->
+  <footer class="bg-primary text-light py-10 mt-12">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+      <div class="text-center md:text-left">
+        <h5 class="font-heading text-xl">Secure Book Library</h5>
+        <p class="mt-1 text-sm">A secure platform for distributing protected content.</p>
+      </div>
+      <p class="mt-4 md:mt-0 text-sm">&copy; {% now "Y" %} Secure Book Library. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Tailwind Navbar Toggle Script -->
+  <script>
+    document.getElementById('navToggle').addEventListener('click', () => {
+      document.getElementById('navMenu').classList.toggle('hidden');
+    });
+  </script>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

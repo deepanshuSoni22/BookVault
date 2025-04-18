@@ -1,112 +1,99 @@
 {% extends 'base.html' %}
-
-{% block title %}Upload Book - Secure Book Library{% endblock %}
+{% block title %}Upload Book – Secure Book Library{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="display-5">Upload New Book</h1>
-                <p class="lead">Add a new protected book to the library</p>
-            </div>
-            <div>
-                <a href="{% url 'admin_panel' %}" class="btn btn-outline-primary">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Admin Panel
-                </a>
-            </div>
-        </div>
+<section class="bg-neutral py-16">
+  <div class="max-w-3xl mx-auto px-6">
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h2 class="font-heading text-3xl text-primary">Upload New Book</h2>
+        <p class="font-body text-gray-600">Add a new protected book to the library</p>
+      </div>
+      <a href="{% url 'admin_panel' %}"
+         class="inline-flex items-center px-4 py-2 border-2 border-secondary text-secondary rounded-full hover:bg-secondary hover:text-white transition">
+        <i class="fas fa-arrow-left mr-2"></i>Back
+      </a>
     </div>
-</div>
 
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow">
-                <div class="card-header bg-white">
-                    <h5 class="card-title mb-0">Book Information</h5>
-                </div>
-                <div class="card-body">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="{{ form.title.id_for_label }}" class="form-label">Book Title</label>
-                                {{ form.title }}
-                                {% if form.title.errors %}
-                                <div class="text-danger">{{ form.title.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.author.id_for_label }}" class="form-label">Author</label>
-                                {{ form.author }}
-                                {% if form.author.errors %}
-                                <div class="text-danger">{{ form.author.errors }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
-                            {{ form.description }}
-                            {% if form.description.errors %}
-                            <div class="text-danger">{{ form.description.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="{{ form.cover_image.id_for_label }}" class="form-label">Cover Image</label>
-                                {{ form.cover_image }}
-                                <div class="form-text">Recommended size: 600x900 pixels (JPG, PNG)</div>
-                                {% if form.cover_image.errors %}
-                                <div class="text-danger">{{ form.cover_image.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.pdf_file.id_for_label }}" class="form-label">PDF File</label>
-                                {{ form.pdf_file }}
-                                {% if form.pdf_file.errors %}
-                                <div class="text-danger">{{ form.pdf_file.errors }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="{{ form.password.id_for_label }}" class="form-label">PDF Password</label>
-                            {{ form.password }}
-                            <div class="form-text">{{ form.password.help_text }}</div>
-                            {% if form.password.errors %}
-                            <div class="text-danger">{{ form.password.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-upload me-2"></i>Upload Book
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <div class="bg-white rounded-2xl shadow-lg p-8">
+      <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+
+        <!-- Title & Author -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label for="{{ form.title.id_for_label }}" class="block font-body text-gray-700 mb-2">Book Title</label>
+            {{ form.title|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary" }}
+            {% if form.title.errors %}
+              <p class="mt-1 text-sm text-danger">{{ form.title.errors.0 }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <label for="{{ form.author.id_for_label }}" class="block font-body text-gray-700 mb-2">Author</label>
+            {{ form.author|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary" }}
+            {% if form.author.errors %}
+              <p class="mt-1 text-sm text-danger">{{ form.author.errors.0 }}</p>
+            {% endif %}
+          </div>
         </div>
-    </div>
-</div>
 
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const coverImageInput = document.getElementById('{{ form.cover_image.id_for_label }}');
-        if (coverImageInput) {
-            coverImageInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    // Maybe add preview functionality here
-                }
-            });
-        }
-    });
-</script>
+        <!-- Description -->
+        <div>
+          <label for="{{ form.description.id_for_label }}" class="block font-body text-gray-700 mb-2">Description</label>
+          {{ form.description|add_class:"w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary h-32" }}
+          {% if form.description.errors %}
+            <p class="mt-1 text-sm text-danger">{{ form.description.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Cover Image & PDF File -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label for="{{ form.cover_image.id_for_label }}" class="block font-body text-gray-700 mb-2">Cover Image</label>
+            {{ form.cover_image|add_class:"hidden" }}
+            <label for="{{ form.cover_image.id_for_label }}"
+                   class="flex items-center justify-center px-4 py-3 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-200 transition">
+              <i class="fas fa-image text-secondary text-xl mr-2"></i>
+              <span class="font-body">Choose Image</span>
+            </label>
+            <p class="mt-1 text-sm text-gray-500">Recommended: 600×900px (JPG, PNG)</p>
+            {% if form.cover_image.errors %}
+              <p class="mt-1 text-sm text-danger">{{ form.cover_image.errors.0 }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <label for="{{ form.pdf_file.id_for_label }}" class="block font-body text-gray-700 mb-2">PDF File</label>
+            {{ form.pdf_file|add_class:"hidden" }}
+            <label for="{{ form.pdf_file.id_for_label }}"
+                   class="flex items-center justify-center px-4 py-3 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-200 transition">
+              <i class="fas fa-file-pdf text-secondary text-xl mr-2"></i>
+              <span class="font-body">Choose PDF</span>
+            </label>
+            {% if form.pdf_file.errors %}
+              <p class="mt-1 text-sm text-danger">{{ form.pdf_file.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label for="{{ form.password.id_for_label }}" class="block font-body text-gray-700 mb-2">PDF Password</label>
+          {{ form.password|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary" }}
+          <p class="mt-1 text-sm text-gray-500">{{ form.password.help_text }}</p>
+          {% if form.password.errors %}
+            <p class="mt-1 text-sm text-danger">{{ form.password.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Submit -->
+        <div class="text-right">
+          <button type="submit"
+                  class="inline-flex items-center font-medium px-6 py-3 bg-secondary text-white rounded-full hover:bg-blue-700 transition">
+            <i class="fas fa-upload mr-2"></i>Upload Book
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
 {% endblock %}
-{% endblock %}  

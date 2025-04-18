@@ -1,105 +1,84 @@
-<!-- templates/home.html -->
 {% extends 'base.html' %}
 {% load static %}
-
 
 {% block title %}Secure Book Library - Home{% endblock %}
 
 {% block content %}
-<header class="bg-dark text-white py-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-7">
-                <h1 class="display-4 fw-bold mb-3">Welcome to Secure Book Library</h1>
-                <p class="lead mb-4">A secure platform for distributing protected content with controlled access.</p>
-                <div class="d-flex gap-3">
-                    <a href="{% url 'book_list' %}" class="btn btn-primary btn-lg px-4">
-                        <i class="fas fa-book me-2"></i>Browse Books
-                    </a>
-                    {% if not user.is_authenticated %}
-                    <a href="{% url 'signup' %}" class="btn btn-outline-light btn-lg px-4">
-                        <i class="fas fa-user-plus me-2"></i>Sign Up
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="col-lg-5 d-none d-lg-block">
-                <img src="{% static 'images/bookstore.jpg' %}" alt="Book Library" class="img-fluid rounded shadow">
-            </div>
-        </div>
+<!-- Hero -->
+<section class="relative bg-neutral">
+  <img src="{% static 'images/library-hero-2.jpg' %}"
+       alt="Library Hero"
+       class="absolute inset-0 w-full h-full object-cover opacity-30" />
+  <div class="relative z-10 max-w-5xl mx-auto text-center py-24 px-6">
+    <h1 class="font-heading text-5xl md:text-6xl text-primary mb-6">Discover. Request. Read.</h1>
+    <p class="font-body text-lg md:text-xl text-dark mb-8">
+      A premium, secure platform for accessing encrypted PDF collections.
+    </p>
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <a href="{% url 'book_list' %}"
+         class="bg-secondary text-white px-8 py-3 rounded-full font-medium hover:bg-blue-700 transition">
+        Browse Library
+      </a>
+      {% if not user.is_authenticated %}
+      <a href="{% url 'signup' %}"
+         class="border-2 border-secondary text-secondary px-8 py-3 rounded-full font-medium hover:bg-secondary hover:text-white transition">
+        Get Started
+      </a>
+      {% endif %}
     </div>
-</header>
-
-<section class="py-5 bg-light">
-    <div class="container">
-        <h2 class="text-center mb-5">How It Works</h2>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <div class="mb-3">
-                            <i class="fas fa-search fa-3x text-primary"></i>
-                        </div>
-                        <h4 class="card-title">Browse Books</h4>
-                        <p class="card-text">Explore our collection of protected books available in our library.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <div class="mb-3">
-                            <i class="fas fa-paper-plane fa-3x text-primary"></i>
-                        </div>
-                        <h4 class="card-title">Request Access</h4>
-                        <p class="card-text">Send a request to access books that interest you.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <div class="mb-3">
-                            <i class="fas fa-unlock-alt fa-3x text-primary"></i>
-                        </div>
-                        <h4 class="card-title">Get Access</h4>
-                        <p class="card-text">Once approved, receive password to open the locked PDF.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </section>
 
-<section class="py-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6 order-lg-2">
-                <img src="{% static 'images/secure.png' %}" alt="Secure access" class="img-fluid rounded shadow">
-            </div>
-            <div class="col-lg-6 order-lg-1">
-                <h2 class="mb-4">Secure Content Distribution</h2>
-                <p class="lead">Our platform ensures that your content remains protected while providing controlled access to authorized users.</p>
-                <ul class="list-unstyled">
-                    <li class="mb-2">
-                        <i class="fas fa-check-circle text-success me-2"></i> 
-                        Password-protected PDF files
-                    </li>
-                    <li class="mb-2">
-                        <i class="fas fa-check-circle text-success me-2"></i> 
-                        Controlled access approval system
-                    </li>
-                    <li class="mb-2">
-                        <i class="fas fa-check-circle text-success me-2"></i> 
-                        User management for administrators
-                    </li>
-                    <li class="mb-2">
-                        <i class="fas fa-check-circle text-success me-2"></i> 
-                        Secure distribution of access credentials
-                    </li>
-                </ul>
-            </div>
-        </div>
+<!-- Features -->
+<section class="py-20">
+  <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-10">
+    <div class="text-center space-y-4">
+      <i class="fas fa-search text-secondary text-4xl"></i>
+      <h3 class="font-heading text-2xl">Explore</h3>
+      <p class="font-body text-gray-600">Seamlessly browse our curated book collection.</p>
     </div>
+    <div class="text-center space-y-4">
+      <i class="fas fa-paper-plane text-secondary text-4xl"></i>
+      <h3 class="font-heading text-2xl">Request</h3>
+      <p class="font-body text-gray-600">Submit access requests with one click.</p>
+    </div>
+    <div class="text-center space-y-4">
+      <i class="fas fa-unlock-alt text-secondary text-4xl"></i>
+      <h3 class="font-heading text-2xl">Unlock</h3>
+      <p class="font-body text-gray-600">Receive your secure PDF password instantly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section class="bg-light py-20">
+  <div class="max-w-6xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-12">
+    <div class="lg:w-1/2">
+      <img src="{% static 'images/secure-access.jpg' %}"
+           alt="Secure Access"
+           class="rounded-2xl shadow-lg w-full object-cover" />
+    </div>
+    <div class="lg:w-1/2 space-y-6">
+      <h2 class="font-heading text-3xl text-primary">Premium Secure Distribution</h2>
+      <p class="font-body text-gray-700">
+        We ensure your PDFs remain encrypted at rest and in transit, with
+        a streamlined approval workflow for authorized readers only.
+      </p>
+      <ul class="space-y-3">
+        <li class="flex items-center">
+          <i class="fas fa-check-circle text-accent mr-3"></i>
+          <span class="font-body text-gray-700">128‑bit AES encryption</span>
+        </li>
+        <li class="flex items-center">
+          <i class="fas fa-check-circle text-accent mr-3"></i>
+          <span class="font-body text-gray-700">Admin‑managed user roles</span>
+        </li>
+        <li class="flex items-center">
+          <i class="fas fa-check-circle text-accent mr-3"></i>
+          <span class="font-body text-gray-700">Instant password delivery</span>
+        </li>
+      </ul>
+    </div>
+  </div>
 </section>
 {% endblock %}
