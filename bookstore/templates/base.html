@@ -17,7 +17,8 @@
             accent: '#00cfc8',     // Verdant Green
             neutral: '#f7e8d3',    // Cream neutral
             dark: '#0f172a',
-            light: '#f4f6f8'
+            light: '#f4f6f8',
+            danger: '#dc2626'      // Added danger color for error messages
           },
           fontFamily: {
             heading: ['Montserrat', 'sans-serif'],
@@ -29,6 +30,8 @@
   </script>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet" />
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
   {% block extra_css %}{% endblock %}
 </head>
@@ -48,14 +51,15 @@
           <a href="{% url 'admin_panel' %}" class="hover:text-secondary transition">Admin Panel</a>
         {% endif %}
       </div>
-      <div class="flex items-center space-x-4 font-body">
+      <!-- Change this part in the main navigation area -->
+      <div class="hidden md:flex items-center space-x-4 font-body">
         {% if user.is_authenticated %}
-        <div class="relative group">
-          <button class="flex items-center space-x-2">
+        <div x-data="{ open: false }" class="relative">
+          <button @click="open = !open" @click.away="open = false" class="flex items-center space-x-2">
             <i class="fas fa-user-circle text-2xl"></i>
             <span>{{ user.username }}</span>
           </button>
-          <div class="absolute right-0 mt-2 hidden group-hover:block bg-white shadow-lg rounded">
+          <div x-show="open" class="absolute right-0 mt-2 bg-white shadow-lg rounded">
             <form method="post" action="{% url 'logout' %}">
               {% csrf_token %}
               <button type="submit" class="block px-4 py-2 text-left hover:bg-light w-full">Logout</button>
@@ -71,6 +75,12 @@
     </div>
     <!-- Mobile Menu -->
     <div class="md:hidden hidden bg-white/90" id="navMenu">
+      {% if user.is_authenticated %}
+      <div class="flex items-center px-6 py-3 border-b border-gray-100">
+        <i class="fas fa-user-circle text-xl mr-2"></i>
+        <span class="font-medium">{{ user.username }}</span>
+      </div>
+      {% endif %}
       <a href="{% url 'home' %}" class="block px-6 py-2 hover:bg-light">Home</a>
       <a href="{% url 'book_list' %}" class="block px-6 py-2 hover:bg-light">Books</a>
       {% if user.is_authenticated and user.is_admin %}
@@ -115,10 +125,20 @@
     </div>
   </footer>
 
-  <!-- Tailwind Navbar Toggle Script -->
+  <!-- Alpine.js for dropdowns -->
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  
+  <!-- Navbar Toggle Script -->
   <script>
-    document.getElementById('navToggle').addEventListener('click', () => {
-      document.getElementById('navMenu').classList.toggle('hidden');
+    document.addEventListener('DOMContentLoaded', function() {
+      const navToggle = document.getElementById('navToggle');
+      const navMenu = document.getElementById('navMenu');
+      
+      if (navToggle && navMenu) {
+        navToggle.addEventListener('click', function() {
+          navMenu.classList.toggle('hidden');
+        });
+      }
     });
   </script>
   {% block extra_js %}{% endblock %}
