@@ -38,65 +38,72 @@
 <body class="bg-light text-dark font-body">
 
   <!-- Navbar -->
-  <nav class="bg-white/70 backdrop-blur-md shadow-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <a href="{% url 'home' %}" class="flex items-center space-x-2 font-heading text-xl text-primary">
-        <i class="fas fa-book-reader"></i>
-        <span>Secure Book Library</span>
-      </a>
-      <div class="hidden md:flex items-center space-x-6 font-body">
-        <a href="{% url 'home' %}" class="hover:text-secondary transition">Home</a>
-        <a href="{% url 'book_list' %}" class="hover:text-secondary transition">Books</a>
-        {% if user.is_authenticated and user.is_admin %}
-          <a href="{% url 'admin_panel' %}" class="hover:text-secondary transition">Admin Panel</a>
-        {% endif %}
-      </div>
-      <!-- Change this part in the main navigation area -->
-      <div class="hidden md:flex items-center space-x-4 font-body">
-        {% if user.is_authenticated %}
-        <div x-data="{ open: false }" class="relative">
-          <button @click="open = !open" @click.away="open = false" class="flex items-center space-x-2">
-            <i class="fas fa-user-circle text-2xl"></i>
-            <span>{{ user.username }}</span>
-          </button>
-          <div x-show="open" class="absolute right-0 mt-2 bg-white shadow-lg rounded">
-            <form method="post" action="{% url 'logout' %}">
-              {% csrf_token %}
-              <button type="submit" class="block px-4 py-2 text-left hover:bg-light w-full">Logout</button>
-            </form>
-          </div>
-        </div>
-        {% else %}
-          <a href="{% url 'login' %}" class="hover:text-secondary transition">Login</a>
-          <a href="{% url 'signup' %}" class="hover:text-secondary transition">Sign Up</a>
-        {% endif %}
-      </div>
-      <button class="md:hidden text-2xl" id="navToggle"><i class="fas fa-bars"></i></button>
-    </div>
-    <!-- Mobile Menu -->
-    <div class="md:hidden hidden bg-white/90" id="navMenu">
-      {% if user.is_authenticated %}
-      <div class="flex items-center px-6 py-3 border-b border-gray-100">
-        <i class="fas fa-user-circle text-xl mr-2"></i>
-        <span class="font-medium">{{ user.username }}</span>
-      </div>
-      {% endif %}
-      <a href="{% url 'home' %}" class="block px-6 py-2 hover:bg-light">Home</a>
-      <a href="{% url 'book_list' %}" class="block px-6 py-2 hover:bg-light">Books</a>
+<nav class="bg-white/70 backdrop-blur-md shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <a href="{% url 'home' %}" class="flex items-center space-x-2 font-heading text-xl text-primary">
+      <i class="fas fa-book-reader"></i>
+      <span>Secure Book Library</span>
+    </a>
+    <div class="hidden md:flex items-center space-x-6 font-body">
+      <a href="{% url 'home' %}" class="hover:text-secondary transition">Home</a>
+      <a href="{% url 'book_list' %}" class="hover:text-secondary transition">Books</a>
       {% if user.is_authenticated and user.is_admin %}
-        <a href="{% url 'admin_panel' %}" class="block px-6 py-2 hover:bg-light">Admin Panel</a>
-      {% endif %}
-      {% if user.is_authenticated %}
-        <form method="post" action="{% url 'logout' %}" class="px-6 py-2">
-          {% csrf_token %}
-          <button type="submit" class="w-full text-left hover:bg-light">Logout</button>
-        </form>
-      {% else %}
-        <a href="{% url 'login' %}" class="block px-6 py-2 hover:bg-light">Login</a>
-        <a href="{% url 'signup' %}" class="block px-6 py-2 hover:bg-light">Sign Up</a>
+        <a href="{% url 'admin_panel' %}" class="hover:text-secondary transition">Admin Panel</a>
       {% endif %}
     </div>
-  </nav>
+    <!-- Main navigation area -->
+    <div class="hidden md:flex items-center space-x-4 font-body">
+      {% if user.is_authenticated %}
+      <div x-data="{ open: false }" class="relative">
+        <button @click="open = !open" @click.away="open = false" class="flex items-center space-x-2">
+          <i class="fas fa-user-circle text-2xl"></i>
+          <span>{{ user.username }}</span>
+          {% if user.is_admin %}
+            <i class="fas fa-user-shield text-sm text-secondary" title="Admin"></i>
+          {% endif %}
+        </button>
+        <div x-show="open" class="absolute right-0 mt-2 bg-white shadow-lg rounded">
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="block px-4 py-2 text-left hover:bg-light w-full">Logout</button>
+          </form>
+        </div>
+      </div>
+      {% else %}
+        <a href="{% url 'login' %}" class="hover:text-secondary transition">Login</a>
+        <a href="{% url 'signup' %}" class="hover:text-secondary transition">Sign Up</a>
+      {% endif %}
+    </div>
+    <button class="md:hidden text-2xl" id="navToggle"><i class="fas fa-bars"></i></button>
+  </div>
+  <!-- Mobile Menu -->
+  <div class="md:hidden hidden bg-white/90" id="navMenu">
+    {% if user.is_authenticated %}
+    <div class="flex items-center px-6 py-3 border-b border-gray-100">
+      <i class="fas fa-user-circle text-xl mr-2"></i>
+      <span class="font-medium">{{ user.username }}</span>
+      {% if user.is_admin %}
+        <i class="fas fa-user-shield text-sm text-secondary ml-1" title="Admin"></i>
+      {% endif %}
+    </div>
+    {% endif %}
+    <a href="{% url 'home' %}" class="block px-6 py-2 hover:bg-light">Home</a>
+    <a href="{% url 'book_list' %}" class="block px-6 py-2 hover:bg-light">Books</a>
+    {% if user.is_authenticated and user.is_admin %}
+      <a href="{% url 'admin_panel' %}" class="block px-6 py-2 hover:bg-light">Admin Panel</a>
+    {% endif %}
+    {% if user.is_authenticated %}
+      <form method="post" action="{% url 'logout' %}" class="px-6 py-2">
+        {% csrf_token %}
+        <button type="submit" class="w-full text-left hover:bg-light">Logout</button>
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}" class="block px-6 py-2 hover:bg-light">Login</a>
+      <a href="{% url 'signup' %}" class="block px-6 py-2 hover:bg-light">Sign Up</a>
+    {% endif %}
+  </div>
+</nav>
+
 
   <!-- Flash Messages -->
   {% if messages %}
