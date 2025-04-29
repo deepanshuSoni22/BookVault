@@ -35,7 +35,7 @@
 
   {% block extra_css %}{% endblock %}
 </head>
-<body class="bg-light text-dark font-body">
+<body class="bg-light text-dark font-body min-h-screen flex flex-col">
 
   <!-- Navbar -->
 <nav class="bg-white/70 backdrop-blur-md shadow-md sticky top-0 z-50">
@@ -122,7 +122,7 @@
   {% block content %}{% endblock %}
 
   <!-- Footer -->
-  <footer class="bg-primary text-light py-10 mt-12">
+  <footer class="bg-primary text-light py-10 mt-auto">
     <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
       <div class="text-center md:text-left">
         <h5 class="font-heading text-xl">Digital Book Store</h5>
